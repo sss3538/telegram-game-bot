@@ -1,43 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Flappy Bird</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { text-align: center; }
-        #bird { width: 30px; height: 30px; background: yellow; border-radius: 50%; position: absolute; }
-        .pipe { width: 50px; background: green; position: absolute; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        .game-container {
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 { color: #333; margin-bottom: 20px; font-size: 28px; }
+        #gameCanvas {
+            display: block;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            border: 3px solid #333;
+            border-radius: 10px;
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .score-board div {
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 5px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .score-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 24px;
+        }
+        .controls { margin-bottom: 20px; }
+        button {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        button:hover { background-color: #764ba2; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        .instructions {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 14px;
+            color: #666;
+        }
+        .instructions h3 { color: #333; margin-bottom: 10px; }
+        .game-over {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            text-align: center;
+            min-width: 250px;
+        }
+        .game-over h2 { color: #e74c3c; margin-bottom: 15px; font-size: 28px; }
+        .game-over p { color: #333; margin-bottom: 20px; font-size: 18px; }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
-    <h1>Flappy Bird Game</h1>
-    <div id="bird"></div>
-    <script>
-        let bird = document.getElementById('bird');
-        let gravity = 0.6;
-        let lift = -15;
-        let velocity = 0;
-        let birdBottom = 150;
-
-        function fly() {
-            velocity += lift;
-        }
-
-        function gameLoop() {
-            birdBottom += velocity;
-            velocity += gravity;
-            bird.style.bottom = birdBottom + 'px';
-
-            if (birdBottom > window.innerHeight) {
-                birdBottom = window.innerHeight;
-                velocity = 0;
-            }
-            requestAnimationFrame(gameLoop);
-        }
-
-        window.addEventListener('keydown', fly);
-        gameLoop();
-    </script>
+    <div class="overlay" id="overlay"></div>
+    <div class="game-container">
+        <h1>🐦 Flappy Bird</h1>
+        <canvas id="gameCanvas"></canvas>
+        <div class="score-board">
+            <div>Score<br><span class="score-value" id="score">0</span></div>
+            <div>Best<br><span class="score-value" id="bestScore">0</span></div>
+        </div>
+        <div class="controls">
+            <button id="startBtn" onclick="startGame()">Start Game</button>
+            <button id="pauseBtn" onclick="togglePause()" disabled>Pause</button>
+            <button id="resetBtn" onclick="resetGame()">Reset</button>
+        </div>
+        <div class="instructions">
+            <h3>📋 How to Play:</h3>
+            <p>✋ Tap or click anywhere to make the bird jump</p>
+            <p>🎯 Avoid the pipes and ground</p>
+            <p>⭐ Try to get the highest score!</p>
+        </div>
+    </div>
+    <div class="game-over" id="gameOverModal">
+        <h2>Game Over!</h2>
+        <p>Your Score: <span id="finalScore">0</span></p>
+        <button onclick="startGame()" style="background-color: #27ae60;">Play Again</button>
+    </div>
+    <script src="game.js"></script>
 </body>
 </html>
