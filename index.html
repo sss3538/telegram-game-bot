@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body { text-align: center; }
+        #bird { width: 30px; height: 30px; background: yellow; border-radius: 50%; position: absolute; }
+        .pipe { width: 50px; background: green; position: absolute; }
+    </style>
+</head>
+<body>
+    <h1>Flappy Bird Game</h1>
+    <div id="bird"></div>
+    <script>
+        let bird = document.getElementById('bird');
+        let gravity = 0.6;
+        let lift = -15;
+        let velocity = 0;
+        let birdBottom = 150;
+
+        function fly() {
+            velocity += lift;
+        }
+
+        function gameLoop() {
+            birdBottom += velocity;
+            velocity += gravity;
+            bird.style.bottom = birdBottom + 'px';
+
+            if (birdBottom > window.innerHeight) {
+                birdBottom = window.innerHeight;
+                velocity = 0;
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('keydown', fly);
+        gameLoop();
+    </script>
+</body>
+</html>
